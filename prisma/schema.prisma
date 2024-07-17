@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MasterDocuments {
+  id               Int    @id @default(autoincrement())
+  uuid             String @default(uuid())
+  documentPath     String
+  documentDownload String
+
+  type String
+  use  String
+
+  user             User[] @relation(name: "profile")
+  wallpaper        User[] @relation(name: "wallpaper")
+}
+
+model MasterSubscriptions {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  users       User[]
+}
+
+model MasterLevels {
+  id          Int    @id @default(autoincrement())
+  name        String @unique
+  description String
+  users       User[]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String
+  lastname String
+  password String
+  email    String @unique
+  username String @unique
+
+  coin Int @default(0)
+
+  createAt     DateTime  @default(now())
+  updateAt     DateTime  @updatedAt
+  last_session DateTime?
+
+  rol String @default("USER")
+
+  profilePhotoId        Int?
+  profilePhotoReference MasterDocuments? @relation(name: "profile", map: "fields: [user]", fields: [profilePhotoId], references: [id])
+
+  wallpaperPhotoId        Int?
+  wallpaperPhotoReference MasterDocuments? @relation(name: "wallpaper", map: "fields: [wallpaper]", fields: [profilePhotoId], references: [id])
+
+  subscriptionId        Int?
+  subscriptionReference MasterSubscriptions? @relation(fields: [subscriptionId], references: [id])
+
+  levelId        Int?
+  levelReference MasterLevels? @relation(fields: [levelId], references: [id])
+
+  // relations
+  session         Session[]
+  notifications   Notification[]
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+
+  startSession DateTime
+  endSession   DateTime?
+
+  token String
+
+  userId        Int
+  userReference User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id                Int         @id           @default(autoincrement())
+  userId            Int
+  userReference     User        @relation(fields: [userId], references: [id])
+  content           String
+  redirect          String      @default("")
+  type              String
+  by                String
+  read              Boolean     @default(false)
+
+  createAt          DateTime  @default(now())
+}
