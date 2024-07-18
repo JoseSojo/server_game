@@ -1,2 +1,5 @@
 node_modules
-.ev
+.env
+prisma/data.db
+prisma/data.db-journal
+node_modules

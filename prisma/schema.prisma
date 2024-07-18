@@ -6,12 +6,14 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./data.db"
 }
+
 
 model MasterDocuments {
   id               Int    @id @default(autoincrement())
@@ -57,13 +59,13 @@ model User {
   rol String @default("USER")
 
   profilePhotoId        Int?
-  profilePhotoReference MasterDocuments? @relation(name: "profile", map: "fields: [user]", fields: [profilePhotoId], references: [id])
+  profilePhotoReference MasterDocuments?    @relation(name: "profile", fields: [profilePhotoId], references: [id])
 
   wallpaperPhotoId        Int?
-  wallpaperPhotoReference MasterDocuments? @relation(name: "wallpaper", map: "fields: [wallpaper]", fields: [profilePhotoId], references: [id])
+  wallpaperPhotoReference MasterDocuments?  @relation(name: "wallpaper", fields: [profilePhotoId], references: [id])
 
-  subscriptionId        Int?
-  subscriptionReference MasterSubscriptions? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId          Int?
+  subscriptionReference   MasterSubscriptions? @relation(fields: [subscriptionId], references: [id])
 
   levelId        Int?
   levelReference MasterLevels? @relation(fields: [levelId], references: [id])
