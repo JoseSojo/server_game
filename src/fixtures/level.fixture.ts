@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 // 
 
-export const CreateLevels = (dev: any) => {
+export const CreateLevels = async (dev: any) => {
     if(!dev) return;
 
     const prisma = new PrismaClient();

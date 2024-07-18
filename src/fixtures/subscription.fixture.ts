@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 // 
 
-export const CreateSubscription = (dev: any) => {
+export const CreateSubscription = async (dev: any) => {
     if(!dev) return;
 
     const prisma = new PrismaClient();
