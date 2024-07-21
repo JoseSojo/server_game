@@ -1,1 +1,1 @@
-export declare const CreateSubscription: (dev: any) => void;
+export declare const CreateSubscription: (dev: any) => Promise<void>;

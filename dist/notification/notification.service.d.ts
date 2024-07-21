@@ -21,10 +21,10 @@ export declare class NotificationService {
         userId: number;
     }): Promise<({
         userReference: {
-            email: string;
-            username: string;
             name: string;
             lastname: string;
+            email: string;
+            username: string;
             last_session: Date;
             rol: string;
         };

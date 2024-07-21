@@ -10,11 +10,11 @@ async function main() {
 
     setTimeout(async () => {
         await CreateLevels(process.env.DEV);
-    }, 5000)
+    }, 2000)
 
     setTimeout(async () => {
         await CreateUser(process.env.DEV);
-    }, 8000)
+    }, 2000)
 
     await CreateUser(true);
 }

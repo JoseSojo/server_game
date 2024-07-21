@@ -10,16 +10,17 @@ export declare class SubscriptionService {
         id: number;
         name: string;
         description: string;
+        limitSensei: number;
     }>;
     findAll({ pag, limit }: {
         pag: number;
         limit: number;
     }): Promise<({
         users: {
-            email: string;
-            username: string;
             name: string;
             lastname: string;
+            email: string;
+            username: string;
             last_session: Date;
             _count: {
                 profilePhotoReference: number;
@@ -28,21 +29,23 @@ export declare class SubscriptionService {
                 levelReference: number;
                 session: number;
                 notifications: number;
+                senseis: number;
             };
         }[];
     } & {
         id: number;
         name: string;
         description: string;
+        limitSensei: number;
     })[]>;
     findOne({ id }: {
         id: number;
     }): Promise<{
         users: {
-            email: string;
-            username: string;
             name: string;
             lastname: string;
+            email: string;
+            username: string;
             last_session: Date;
             _count: {
                 profilePhotoReference: number;
@@ -51,12 +54,14 @@ export declare class SubscriptionService {
                 levelReference: number;
                 session: number;
                 notifications: number;
+                senseis: number;
             };
         }[];
     } & {
         id: number;
         name: string;
         description: string;
+        limitSensei: number;
     }>;
     update({ id, data }: {
         id: number;
@@ -65,6 +70,7 @@ export declare class SubscriptionService {
         id: number;
         name: string;
         description: string;
+        limitSensei: number;
     }>;
     remove(id: number): Promise<string>;
 }

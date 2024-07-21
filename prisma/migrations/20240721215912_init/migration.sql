@@ -12,7 +12,8 @@ CREATE TABLE "MasterDocuments" (
 CREATE TABLE "MasterSubscriptions" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
-    "description" TEXT NOT NULL
+    "description" TEXT NOT NULL,
+    "limitSensei" INTEGER NOT NULL
 );
 
 -- CreateTable
@@ -66,6 +67,28 @@ CREATE TABLE "Notification" (
     "read" BOOLEAN NOT NULL DEFAULT false,
     "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Sensei" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "tema" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updateAt" DATETIME NOT NULL,
+    "deleteAt" DATETIME,
+    CONSTRAINT "Sensei_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "SenseiChat" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "message" TEXT NOT NULL,
+    "origin" BOOLEAN NOT NULL,
+    "createAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "senseiId" INTEGER NOT NULL,
+    CONSTRAINT "SenseiChat_senseiId_fkey" FOREIGN KEY ("senseiId") REFERENCES "Sensei" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex

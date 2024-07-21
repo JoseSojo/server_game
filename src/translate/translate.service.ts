@@ -41,6 +41,7 @@ export class TranslateService {
                     create: `Error al crear.`,
                     update: `Error al actualizar.`,
                     added: `Error al agregar.`,
+                    limit: `Límite alcanzado.`,
                 },
             },
             auth: {

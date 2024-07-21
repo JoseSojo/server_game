@@ -26,19 +26,42 @@ const level_module_1 = require("./level/level.module");
 const notification_module_1 = require("./notification/notification.module");
 const subscription_service_1 = require("./subscription/subscription.service");
 const notification_service_1 = require("./notification/notification.service");
+const promp_service_1 = require("./promp/promp.service");
+const sensei_service_1 = require("./sensei/sensei.service");
+const sensei_module_1 = require("./sensei/sensei.module");
+const axios_1 = require("@nestjs/axios");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, user_module_1.UserModule, level_module_1.LevelModule, subscription_module_1.SubscriptionModule, notification_module_1.NotificationModule],
-        controllers: [app_controller_1.AppController, auth_controller_1.AuthController, user_controller_1.UserController, level_controller_1.LevelController],
+        imports: [
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            level_module_1.LevelModule,
+            subscription_module_1.SubscriptionModule,
+            notification_module_1.NotificationModule,
+            sensei_module_1.SenseiModule,
+            axios_1.HttpModule
+        ],
+        controllers: [
+            app_controller_1.AppController,
+            auth_controller_1.AuthController,
+            user_controller_1.UserController,
+            level_controller_1.LevelController
+        ],
         providers: [
             app_service_1.AppService,
-            prisma_service_1.PrismaService, translate_service_1.TranslateService,
-            user_service_1.UserService, jwt_1.JwtService, auth_service_1.AuthService,
-            level_service_1.LevelService, subscription_service_1.SubscriptionService,
-            notification_service_1.NotificationService
+            prisma_service_1.PrismaService,
+            translate_service_1.TranslateService,
+            user_service_1.UserService,
+            jwt_1.JwtService,
+            auth_service_1.AuthService,
+            level_service_1.LevelService,
+            subscription_service_1.SubscriptionService,
+            notification_service_1.NotificationService,
+            promp_service_1.PrompService,
+            sensei_service_1.SenseiService,
         ],
     })
 ], AppModule);

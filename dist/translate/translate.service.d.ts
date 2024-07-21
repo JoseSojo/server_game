@@ -21,6 +21,7 @@ export declare class TranslateService {
                 create: string;
                 update: string;
                 added: string;
+                limit: string;
             };
         };
         auth: {

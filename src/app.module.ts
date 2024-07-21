@@ -17,16 +17,39 @@ import { LevelModule } from './level/level.module';
 import { NotificationModule } from './notification/notification.module';
 import { SubscriptionService } from './subscription/subscription.service';
 import { NotificationService } from './notification/notification.service';
+import { PrompService } from './promp/promp.service';
+import { SenseiService } from './sensei/sensei.service';
+import { SenseiModule } from './sensei/sensei.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [AuthModule, UserModule, LevelModule, SubscriptionModule, NotificationModule],
-  controllers: [AppController, AuthController, UserController, LevelController],
+  imports: [
+    AuthModule, 
+    UserModule,
+    LevelModule, 
+    SubscriptionModule, 
+    NotificationModule, 
+    SenseiModule,
+    HttpModule
+  ],
+  controllers: [
+    AppController, 
+    AuthController, 
+    UserController, 
+    LevelController
+  ],
   providers: [
     AppService,
-    PrismaService, TranslateService, 
-    UserService, JwtService, AuthService, 
-    LevelService, SubscriptionService,
-    NotificationService
+    PrismaService, 
+    TranslateService, 
+    UserService, 
+    JwtService, 
+    AuthService, 
+    LevelService, 
+    SubscriptionService,
+    NotificationService,
+    PrompService,
+    SenseiService, 
   ],
 })
 export class AppModule {}

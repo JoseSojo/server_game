@@ -72,6 +72,24 @@ export class UserController {
         return { body:await coinPromise, message:this.trans.translate().global.success.default }
     }
 
+    @Post(`/coin/increment/:id`)
+    @UseGuards(AuthGuard)
+    public async incrementCoin(@Param(`id`) id: string, @Query() query: { coin?: string }, res: Response) {
+        
+        const coinPromise = this.service.incrementCoint({ id:Number(id), coin: query.coin ? Number(query.coin) : undefined });
+
+        return { body:await coinPromise, message:this.trans.translate().global.success.default }
+    }
+
+    @Post(`/coin/decrement/:id`)
+    @UseGuards(AuthGuard)
+    public async decrementCoin(@Param(`id`) id: string, @Query() query: { coin?: string }, res: Response) {
+
+        const coinPromise = this.service.decrementCoint({ id:Number(id), coin: query.coin ? Number(query.coin) : undefined });
+
+        return { body:await coinPromise, message:this.trans.translate().global.success.default }
+    }
+
     @Get(`/notification/:id`)
     public async getNotifications(@Param(`id`) id: string, @Query() query: { pag:number, limit?:number }, @Response() res: ResponseType) {
 

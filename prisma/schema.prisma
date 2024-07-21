@@ -14,7 +14,6 @@ datasource db {
   url      = "file:./data.db"
 }
 
-
 model MasterDocuments {
   id               Int    @id @default(autoincrement())
   uuid             String @default(uuid())
@@ -32,6 +31,7 @@ model MasterSubscriptions {
   id          Int    @id @default(autoincrement())
   name        String @unique
   description String
+  limitSensei      Int
   users       User[]
 }
 
@@ -73,6 +73,7 @@ model User {
   // relations
   session         Session[]
   notifications   Notification[]
+  senseis         Sensei[]
 }
 
 model Session {
@@ -98,4 +99,28 @@ model Notification {
   read              Boolean     @default(false)
 
   createAt          DateTime  @default(now())
+}
+
+model Sensei {
+  id                Int        @id           @default(autoincrement())
+  name              String
+  tema              String
+
+  userId            Int
+  userReference     User      @relation(fields: [userId], references: [id])
+
+  createAt          DateTime  @default(now())
+  updateAt          DateTime  @updatedAt
+  deleteAt          DateTime?
+
+  propmsQuery       SenseiChat[]  
+}
+
+model SenseiChat {
+  id                Int       @id       @default(autoincrement())
+  message           String
+  origin            Boolean
+  createAt          DateTime    @default(now())
+  senseiId          Int
+  senseiReference   Sensei    @relation(fields: [senseiId], references: [id])
 }

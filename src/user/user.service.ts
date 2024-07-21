@@ -19,6 +19,45 @@ export class UserService {
         return entity;
     }
 
+    public async validateSenseisByUser({ id }: { id:number }) {
+        const user = await this.prisma.user.findFirst({
+            where: { id },
+            include: {
+                subscriptionReference: true,
+                _count: {
+                    select: {
+                        senseis: true
+                    }
+                }
+            }
+        });
+
+        const limitSensei = user.subscriptionReference.limitSensei;
+        const senseiUser = user._count.senseis;
+
+        if(senseiUser+1 > limitSensei) {
+            // limit alcanzado
+            return false;
+        }
+
+        return true;
+    }
+
+    public async findUserById({ id }: { id:number }) {
+        const entityPromise = this.prisma.user.findUnique({ 
+            where: { id },
+            include: {
+                _count: true,
+                levelReference: true,
+                profilePhotoReference: true,
+                subscriptionReference: true,
+                wallpaperPhotoReference: true,
+                session: true
+            }
+        });
+        return entityPromise;
+    }
+
     public async findByEmail({ email }: { email:string }) {
         const entityPromise = this.prisma.user.findUnique({ 
             where: { email },
@@ -51,6 +90,30 @@ export class UserService {
         const entity = this.prisma.user.findFirst({ 
             where: {id},
             select: { coin:true }
+        });
+        return entity;
+    }
+
+    public incrementCoint({ coin, id }: { coin?: number, id: number }) {
+        const entity = this.prisma.user.update({
+            where: { id },
+            data: {
+                coin: {
+                    increment: coin ? coin : 1
+                }
+            }
+        });
+        return entity;
+    }
+
+    public decrementCoint({ coin, id }: { coin?: number, id: number }) {
+        const entity = this.prisma.user.update({
+            where: { id },
+            data: {
+                coin: {
+                    decrement: coin ? coin : 1
+                }
+            }
         });
         return entity;
     }

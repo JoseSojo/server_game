@@ -52,6 +52,14 @@ let UserController = class UserController {
         const coinPromise = this.service.getCoin({ id: Number(id) });
         return { body: await coinPromise, message: this.trans.translate().global.success.default };
     }
+    async incrementCoin(id, query, res) {
+        const coinPromise = this.service.incrementCoint({ id: Number(id), coin: query.coin ? Number(query.coin) : undefined });
+        return { body: await coinPromise, message: this.trans.translate().global.success.default };
+    }
+    async decrementCoin(id, query, res) {
+        const coinPromise = this.service.decrementCoint({ id: Number(id), coin: query.coin ? Number(query.coin) : undefined });
+        return { body: await coinPromise, message: this.trans.translate().global.success.default };
+    }
     async getNotifications(id, query, res) {
         const pagPaginate = query.pag ? query.pag : 0;
         const limitPaginate = query.limit ? query.limit : 10;
@@ -84,6 +92,24 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getCoin", null);
+__decorate([
+    (0, common_1.Post)(`/coin/increment/:id`),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)(`id`)),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "incrementCoin", null);
+__decorate([
+    (0, common_1.Post)(`/coin/decrement/:id`),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    __param(0, (0, common_1.Param)(`id`)),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "decrementCoin", null);
 __decorate([
     (0, common_1.Get)(`/notification/:id`),
     __param(0, (0, common_1.Param)(`id`)),

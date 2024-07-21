@@ -46,6 +46,50 @@ export declare class UserController {
         };
         message: string;
     }>;
+    incrementCoin(id: string, query: {
+        coin?: string;
+    }, res: Response): Promise<{
+        body: {
+            id: number;
+            name: string;
+            lastname: string;
+            password: string;
+            email: string;
+            username: string;
+            coin: number;
+            createAt: Date;
+            updateAt: Date;
+            last_session: Date | null;
+            rol: string;
+            profilePhotoId: number | null;
+            wallpaperPhotoId: number | null;
+            subscriptionId: number | null;
+            levelId: number | null;
+        };
+        message: string;
+    }>;
+    decrementCoin(id: string, query: {
+        coin?: string;
+    }, res: Response): Promise<{
+        body: {
+            id: number;
+            name: string;
+            lastname: string;
+            password: string;
+            email: string;
+            username: string;
+            coin: number;
+            createAt: Date;
+            updateAt: Date;
+            last_session: Date | null;
+            rol: string;
+            profilePhotoId: number | null;
+            wallpaperPhotoId: number | null;
+            subscriptionId: number | null;
+            levelId: number | null;
+        };
+        message: string;
+    }>;
     getNotifications(id: string, query: {
         pag: number;
         limit?: number;

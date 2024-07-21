@@ -7,7 +7,7 @@ const CreateUser = async (dev) => {
     if (!dev)
         return;
     const prisma = new client_1.PrismaClient();
-    const free = await prisma.masterSubscriptions.findFirst({ where: { name: `FREE` } });
+    const free = await prisma.masterSubscriptions.findFirst({ where: { name: `DEFAULT` } });
     const stone = await prisma.masterLevels.findFirst({ where: { name: `STONE` } });
     if (!free)
         return;

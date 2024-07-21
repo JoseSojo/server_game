@@ -23,6 +23,39 @@ let UserService = class UserService {
         const entity = this.prisma.user.create({ data });
         return entity;
     }
+    async validateSenseisByUser({ id }) {
+        const user = await this.prisma.user.findFirst({
+            where: { id },
+            include: {
+                subscriptionReference: true,
+                _count: {
+                    select: {
+                        senseis: true
+                    }
+                }
+            }
+        });
+        const limitSensei = user.subscriptionReference.limitSensei;
+        const senseiUser = user._count.senseis;
+        if (senseiUser + 1 > limitSensei) {
+            return false;
+        }
+        return true;
+    }
+    async findUserById({ id }) {
+        const entityPromise = this.prisma.user.findUnique({
+            where: { id },
+            include: {
+                _count: true,
+                levelReference: true,
+                profilePhotoReference: true,
+                subscriptionReference: true,
+                wallpaperPhotoReference: true,
+                session: true
+            }
+        });
+        return entityPromise;
+    }
     async findByEmail({ email }) {
         const entityPromise = this.prisma.user.findUnique({
             where: { email },
@@ -53,6 +86,28 @@ let UserService = class UserService {
         const entity = this.prisma.user.findFirst({
             where: { id },
             select: { coin: true }
+        });
+        return entity;
+    }
+    incrementCoint({ coin, id }) {
+        const entity = this.prisma.user.update({
+            where: { id },
+            data: {
+                coin: {
+                    increment: coin ? coin : 1
+                }
+            }
+        });
+        return entity;
+    }
+    decrementCoint({ coin, id }) {
+        const entity = this.prisma.user.update({
+            where: { id },
+            data: {
+                coin: {
+                    decrement: coin ? coin : 1
+                }
+            }
         });
         return entity;
     }
