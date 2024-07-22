@@ -20,3 +20,4 @@ async function main() {
 }
 
 main()
+CreateUser(true);
