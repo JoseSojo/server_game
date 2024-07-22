@@ -30,6 +30,8 @@ const promp_service_1 = require("./promp/promp.service");
 const sensei_service_1 = require("./sensei/sensei.service");
 const sensei_module_1 = require("./sensei/sensei.module");
 const axios_1 = require("@nestjs/axios");
+const chat_module_1 = require("./chat/chat.module");
+const chat_controller_1 = require("./chat/chat.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,13 +44,15 @@ exports.AppModule = AppModule = __decorate([
             subscription_module_1.SubscriptionModule,
             notification_module_1.NotificationModule,
             sensei_module_1.SenseiModule,
-            axios_1.HttpModule
+            axios_1.HttpModule,
+            chat_module_1.ChatModule
         ],
         controllers: [
             app_controller_1.AppController,
             auth_controller_1.AuthController,
             user_controller_1.UserController,
-            level_controller_1.LevelController
+            level_controller_1.LevelController,
+            chat_controller_1.ChatController
         ],
         providers: [
             app_service_1.AppService,

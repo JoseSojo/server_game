@@ -6,15 +6,13 @@ import { PrompService } from 'src/promp/promp.service';
 import { CreateSenseiDto } from './dto/create.dto';
 import { Response as ResponseType } from 'express';
 import { CreatePrompDto } from 'src/promp/dto/create.dto';
-import { HttpService } from '@nestjs/axios';
 export declare class SenseiController {
     private trans;
     private user;
     private notification;
     private sensei;
     private promp;
-    private http;
-    constructor(trans: TranslateService, user: UserService, notification: NotificationService, sensei: SenseiService, promp: PrompService, http: HttpService);
+    constructor(trans: TranslateService, user: UserService, notification: NotificationService, sensei: SenseiService, promp: PrompService);
     create(data: any, res: ResponseType): Promise<ResponseType<any, Record<string, any>>>;
     update(data: CreateSenseiDto, id: string, res: ResponseType): Promise<ResponseType<any, Record<string, any>>>;
     prompCreate(data: CreatePrompDto, res: ResponseType): Promise<ResponseType<any, Record<string, any>>>;

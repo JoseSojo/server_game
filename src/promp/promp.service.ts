@@ -15,4 +15,13 @@ export class PrompService {
         return entity;
     }
 
+    public async findAll({ limit, skip, id }: { limit: number, skip: number, id: number }) {
+        const entity = this.prisma.senseiChat.findMany({
+            where: { senseiId: id },
+            skip: skip,
+            take: limit,
+        })
+        return entity;
+    }
+
 }

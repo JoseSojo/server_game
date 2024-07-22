@@ -78,6 +78,7 @@ let UserController = class UserController {
 exports.UserController = UserController;
 __decorate([
     (0, common_1.Post)(`/create`),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -112,6 +113,7 @@ __decorate([
 ], UserController.prototype, "decrementCoin", null);
 __decorate([
     (0, common_1.Get)(`/notification/:id`),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Param)(`id`)),
     __param(1, (0, common_1.Query)()),
     __param(2, (0, common_1.Response)()),
@@ -121,6 +123,7 @@ __decorate([
 ], UserController.prototype, "getNotifications", null);
 __decorate([
     (0, common_1.Get)(`/notification/read/:id`),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
     __param(0, (0, common_1.Param)(`id`)),
     __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),

@@ -31,15 +31,13 @@ export declare class UserService {
     findUserById({ id }: {
         id: number;
     }): Promise<{
-        _count: {
-            profilePhotoReference: number;
-            wallpaperPhotoReference: number;
-            subscriptionReference: number;
-            levelReference: number;
-            session: number;
-            notifications: number;
-            senseis: number;
-        };
+        session: {
+            id: number;
+            startSession: Date;
+            endSession: Date | null;
+            token: string;
+            userId: number;
+        }[];
         profilePhotoReference: {
             id: number;
             uuid: string;
@@ -67,13 +65,15 @@ export declare class UserService {
             name: string;
             description: string;
         };
-        session: {
-            id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
+        _count: {
+            profilePhotoReference: number;
+            wallpaperPhotoReference: number;
+            subscriptionReference: number;
+            levelReference: number;
+            session: number;
+            notifications: number;
+            senseis: number;
+        };
     } & {
         id: number;
         name: string;
@@ -94,6 +94,13 @@ export declare class UserService {
     findByEmail({ email }: {
         email: string;
     }): Promise<{
+        session: {
+            id: number;
+            startSession: Date;
+            endSession: Date | null;
+            token: string;
+            userId: number;
+        }[];
         profilePhotoReference: {
             id: number;
             uuid: string;
@@ -121,13 +128,6 @@ export declare class UserService {
             name: string;
             description: string;
         };
-        session: {
-            id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
     } & {
         id: number;
         name: string;
@@ -148,6 +148,13 @@ export declare class UserService {
     findByUsername({ username }: {
         username: string;
     }): Promise<{
+        session: {
+            id: number;
+            startSession: Date;
+            endSession: Date | null;
+            token: string;
+            userId: number;
+        }[];
         profilePhotoReference: {
             id: number;
             uuid: string;
@@ -175,13 +182,6 @@ export declare class UserService {
             name: string;
             description: string;
         };
-        session: {
-            id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
     } & {
         id: number;
         name: string;

@@ -7,8 +7,6 @@ import { PrompService } from 'src/promp/promp.service';
 import { CreateSenseiDto } from './dto/create.dto';
 import { Response as ResponseType } from 'express';
 import { CreatePrompDto } from 'src/promp/dto/create.dto';
-import { HttpService } from '@nestjs/axios';
-import axios from 'axios';
 
 @Controller('sensei')
 export class SenseiController {
@@ -19,7 +17,6 @@ export class SenseiController {
         private notification: NotificationService,
         private sensei: SenseiService,
         private promp: PrompService,
-        private http: HttpService,
     ) {}
 
     @Post(``)

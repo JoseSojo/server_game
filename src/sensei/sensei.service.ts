@@ -2,7 +2,6 @@ import { ForbiddenException, Injectable, Post } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrompService } from 'src/promp/promp.service';
 import { CreateSenseiDto } from './dto/create.dto';
-import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 
 @Injectable()
@@ -11,7 +10,6 @@ export class SenseiService {
     constructor(
         private prisma: PrismaService,
         private promp: PrompService,
-        private http: HttpService
     ) {}
 
     public async create({ data }: { data: CreateSenseiDto }) {

@@ -21,6 +21,8 @@ import { PrompService } from './promp/promp.service';
 import { SenseiService } from './sensei/sensei.service';
 import { SenseiModule } from './sensei/sensei.module';
 import { HttpModule } from '@nestjs/axios';
+import { ChatModule } from './chat/chat.module';
+import { ChatController } from './chat/chat.controller';
 
 @Module({
   imports: [
@@ -30,13 +32,15 @@ import { HttpModule } from '@nestjs/axios';
     SubscriptionModule, 
     NotificationModule, 
     SenseiModule,
-    HttpModule
+    HttpModule,
+    ChatModule
   ],
   controllers: [
     AppController, 
     AuthController, 
     UserController, 
-    LevelController
+    LevelController,
+    ChatController
   ],
   providers: [
     AppService,
@@ -49,7 +53,7 @@ import { HttpModule } from '@nestjs/axios';
     SubscriptionService,
     NotificationService,
     PrompService,
-    SenseiService, 
+    SenseiService,
   ],
 })
 export class AppModule {}

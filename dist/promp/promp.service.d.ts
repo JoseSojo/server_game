@@ -12,4 +12,15 @@ export declare class PrompService {
         createAt: Date;
         senseiId: number;
     }>;
+    findAll({ limit, skip, id }: {
+        limit: number;
+        skip: number;
+        id: number;
+    }): Promise<{
+        id: number;
+        message: string;
+        origin: boolean;
+        createAt: Date;
+        senseiId: number;
+    }[]>;
 }

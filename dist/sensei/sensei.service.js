@@ -13,12 +13,10 @@ exports.SenseiService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const promp_service_1 = require("../promp/promp.service");
-const axios_1 = require("@nestjs/axios");
 let SenseiService = class SenseiService {
-    constructor(prisma, promp, http) {
+    constructor(prisma, promp) {
         this.prisma = prisma;
         this.promp = promp;
-        this.http = http;
     }
     async create({ data }) {
         const entity = this.prisma.sensei.create({ data });
@@ -78,7 +76,6 @@ exports.SenseiService = SenseiService;
 exports.SenseiService = SenseiService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        promp_service_1.PrompService,
-        axios_1.HttpService])
+        promp_service_1.PrompService])
 ], SenseiService);
 //# sourceMappingURL=sensei.service.js.map

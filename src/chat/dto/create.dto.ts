@@ -1,11 +1,10 @@
-import {
+import { 
     IsString,
     IsNotEmpty,
-    IsBoolean,
     IsNumber,
 } from "class-validator";
 
-export class CreatePrompDto {
+export class CreateMessageDto {
 
     @IsString()
     @IsNotEmpty()
@@ -14,8 +13,5 @@ export class CreatePrompDto {
     @IsNumber()
     @IsNotEmpty()
     senseiId: number
-
-    @IsBoolean()
-    origin: boolean
 
 }

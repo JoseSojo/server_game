@@ -17,10 +17,10 @@ export declare class SubscriptionService {
         limit: number;
     }): Promise<({
         users: {
-            name: string;
-            lastname: string;
             email: string;
             username: string;
+            name: string;
+            lastname: string;
             last_session: Date;
             _count: {
                 profilePhotoReference: number;
@@ -42,10 +42,10 @@ export declare class SubscriptionService {
         id: number;
     }): Promise<{
         users: {
-            name: string;
-            lastname: string;
             email: string;
             username: string;
+            name: string;
+            lastname: string;
             last_session: Date;
             _count: {
                 profilePhotoReference: number;

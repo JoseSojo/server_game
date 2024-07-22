@@ -20,6 +20,14 @@ let PrompService = class PrompService {
         const entity = this.prisma.senseiChat.create({ data });
         return entity;
     }
+    async findAll({ limit, skip, id }) {
+        const entity = this.prisma.senseiChat.findMany({
+            where: { senseiId: id },
+            skip: skip,
+            take: limit,
+        });
+        return entity;
+    }
 };
 exports.PrompService = PrompService;
 exports.PrompService = PrompService = __decorate([

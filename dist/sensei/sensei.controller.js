@@ -21,15 +21,13 @@ const sensei_service_1 = require("./sensei.service");
 const promp_service_1 = require("../promp/promp.service");
 const create_dto_1 = require("./dto/create.dto");
 const create_dto_2 = require("../promp/dto/create.dto");
-const axios_1 = require("@nestjs/axios");
 let SenseiController = class SenseiController {
-    constructor(trans, user, notification, sensei, promp, http) {
+    constructor(trans, user, notification, sensei, promp) {
         this.trans = trans;
         this.user = user;
         this.notification = notification;
         this.sensei = sensei;
         this.promp = promp;
-        this.http = http;
     }
     async create(data, res) {
         const entityUser = this.user.validateSenseisByUser({ id: Number(data.userId) });
@@ -125,7 +123,6 @@ exports.SenseiController = SenseiController = __decorate([
         user_service_1.UserService,
         notification_service_1.NotificationService,
         sensei_service_1.SenseiService,
-        promp_service_1.PrompService,
-        axios_1.HttpService])
+        promp_service_1.PrompService])
 ], SenseiController);
 //# sourceMappingURL=sensei.controller.js.map

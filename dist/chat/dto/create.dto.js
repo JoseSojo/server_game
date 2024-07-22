@@ -9,23 +9,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreatePrompDto = void 0;
+exports.CreateMessageDto = void 0;
 const class_validator_1 = require("class-validator");
-class CreatePrompDto {
+class CreateMessageDto {
 }
-exports.CreatePrompDto = CreatePrompDto;
+exports.CreateMessageDto = CreateMessageDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreatePrompDto.prototype, "message", void 0);
+], CreateMessageDto.prototype, "message", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
-], CreatePrompDto.prototype, "senseiId", void 0);
-__decorate([
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreatePrompDto.prototype, "origin", void 0);
+], CreateMessageDto.prototype, "senseiId", void 0);
 //# sourceMappingURL=create.dto.js.map

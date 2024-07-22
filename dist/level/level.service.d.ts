@@ -9,10 +9,10 @@ export declare class LevelService {
         limit: number;
     }): Promise<({
         users: {
-            name: string;
-            lastname: string;
             email: string;
             username: string;
+            name: string;
+            lastname: string;
             last_session: Date;
             _count: {
                 profilePhotoReference: number;
@@ -33,10 +33,10 @@ export declare class LevelService {
         id: number;
     }): Promise<{
         users: {
-            name: string;
-            lastname: string;
             email: string;
             username: string;
+            name: string;
+            lastname: string;
             last_session: Date;
             rol: string;
         }[];

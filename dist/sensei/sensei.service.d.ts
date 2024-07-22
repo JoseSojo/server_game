@@ -1,12 +1,10 @@
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrompService } from 'src/promp/promp.service';
 import { CreateSenseiDto } from './dto/create.dto';
-import { HttpService } from '@nestjs/axios';
 export declare class SenseiService {
     private prisma;
     private promp;
-    private http;
-    constructor(prisma: PrismaService, promp: PrompService, http: HttpService);
+    constructor(prisma: PrismaService, promp: PrompService);
     create({ data }: {
         data: CreateSenseiDto;
     }): Promise<{

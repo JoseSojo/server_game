@@ -31,6 +31,7 @@ export class UserController {
     ) {}
 
     @Post(`/create`)
+    @UseGuards(AuthGuard)
     @UsePipes(new ValidationPipe())
     public async create(@Body() data: CreateUserDto) {
         const hashPromise = this.service.HashPassword({ password:data.password });
@@ -91,6 +92,7 @@ export class UserController {
     }
 
     @Get(`/notification/:id`)
+    @UseGuards(AuthGuard)
     public async getNotifications(@Param(`id`) id: string, @Query() query: { pag:number, limit?:number }, @Response() res: ResponseType) {
 
         const pagPaginate = query.pag ? query.pag : 0;
@@ -103,6 +105,7 @@ export class UserController {
     }
 
     @Get(`/notification/read/:id`)
+    @UseGuards(AuthGuard)
     public async read(@Param(`id`) id: string, @Response() res: ResponseType) {
         const entity = this.notification.read({ id: Number(id) });
         return res
