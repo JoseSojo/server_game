@@ -26,12 +26,10 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-    //   const session = await this.authService.findSessionByToken({ token });
+      const user = await this.userService.findSessionByToken(token);
 
-        // const session = {userReference:{email:123}};
-        // request['user'] = await this.userService.findByEmail({ email:session.userReference.email });
-        // request['user'].password = ``;
-        // request['session'] = session;
+      request['user'] = user.data;
+      request['token'] = user.token;
     } catch {
       throw new UnauthorizedException();
     }

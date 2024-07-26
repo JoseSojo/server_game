@@ -82,6 +82,25 @@ export class UserService {
         });
     }
 
+    public async findSessionByToken(token: string) {
+        const session = await this.prisma.session.findFirst({
+            where: { token },
+            include: {
+                userReference: {
+                    include: {
+                        dameReference: true,
+                        levelReference: true,
+                        profilePhotoReference: true,
+                        subscriptionReference: true,
+                        userReference: true
+                    }
+                }
+            }
+        });
+
+        return { token:session.token, data: session.userReference };
+    }
+
     public async CreateJWT(id: number) {
         return 
     }
