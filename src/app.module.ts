@@ -1,59 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthController } from './auth/auth.controller';
-import { AuthModule } from './auth/auth.module';
-import { PrismaService } from './prisma/prisma.service';
-import { TranslateService } from './translate/translate.service';
-import { UserModule } from './user/user.module';
-import { UserController } from './user/user.controller';
-import { UserService } from './user/user.service';
-import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth/auth.service';
-import { SubscriptionModule } from './subscription/subscription.module';
-import { LevelService } from './level/level.service';
-import { LevelController } from './level/level.controller';
+import { GameModule } from './game/game.module';
+import { PrismaService } from './global/prisma.service';
 import { LevelModule } from './level/level.module';
-import { NotificationModule } from './notification/notification.module';
+import { GameController } from './game/game.controller';
+import { LevelController } from './level/level.controller';
+import { GameService } from './game/game.service';
+import { LevelService } from './level/level.service';
+import { UserModule } from './user/user.module';
+import { AuthController } from './auth/auth.controller';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from './user/user.service';
+import { FixturesService } from './fixtures/fixtures.service';
 import { SubscriptionService } from './subscription/subscription.service';
-import { NotificationService } from './notification/notification.service';
-import { PrompService } from './promp/promp.service';
-import { SenseiService } from './sensei/sensei.service';
-import { SenseiModule } from './sensei/sensei.module';
-import { HttpModule } from '@nestjs/axios';
-import { ChatModule } from './chat/chat.module';
-import { ChatController } from './chat/chat.controller';
 
 @Module({
-  imports: [
-    AuthModule, 
-    UserModule,
-    LevelModule, 
-    SubscriptionModule, 
-    NotificationModule, 
-    SenseiModule,
-    HttpModule,
-    ChatModule
-  ],
-  controllers: [
-    AppController, 
-    AuthController, 
-    UserController, 
-    LevelController,
-    ChatController
-  ],
-  providers: [
-    AppService,
-    PrismaService, 
-    TranslateService, 
-    UserService, 
-    JwtService, 
-    AuthService, 
-    LevelService, 
-    SubscriptionService,
-    NotificationService,
-    PrompService,
-    SenseiService,
-  ],
+  imports: [ GameModule, LevelModule, UserModule ],
+  controllers: [ GameController, LevelController, AuthController ],
+  providers: [ GameService, LevelService, PrismaService, JwtService, UserService, FixturesService, SubscriptionService ],
 })
 export class AppModule {}

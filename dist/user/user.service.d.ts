@@ -1,188 +1,58 @@
-import { PrismaService } from 'src/prisma/prisma.service';
-import { TranslateService } from 'src/translate/translate.service';
-import { CreateUserDto } from './dto/create.dto';
-import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/global/prisma.service';
+import { RegisterDto } from './dto/register.dto';
+import { JwtService } from '@nestjs/jwt';
 export declare class UserService {
     private prisma;
-    private trans;
-    constructor(prisma: PrismaService, trans: TranslateService);
-    create({ data }: {
-        data: CreateUserDto;
-    }): Promise<{
-        id: number;
-        name: string;
-        lastname: string;
-        password: string;
-        email: string;
-        username: string;
-        coin: number;
-        createAt: Date;
-        updateAt: Date;
-        last_session: Date | null;
-        rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
-        subscriptionId: number | null;
-        levelId: number | null;
-    }>;
-    validateSenseisByUser({ id }: {
-        id: number;
-    }): Promise<boolean>;
-    findUserById({ id }: {
-        id: number;
-    }): Promise<{
-        session: {
+    private jwt;
+    constructor(prisma: PrismaService, jwt: JwtService);
+    findFirsh(param: string, nameGame: string): Promise<{
+        userReference: {
             id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
-        profilePhotoReference: {
-            id: number;
-            uuid: string;
-            documentPath: string;
-            documentDownload: string;
-            type: string;
-            use: string;
+            name: string;
+            lastname: string;
+            password: string;
+            email: string;
+            username: string;
+            coin: number;
+            createAt: Date;
+            updateAt: Date;
+            last_session: Date | null;
+            rol: string;
         };
-        wallpaperPhotoReference: {
+        dameReference: {
             id: number;
-            uuid: string;
-            documentPath: string;
-            documentDownload: string;
-            type: string;
-            use: string;
+            name: string;
+            devices: string;
         };
         subscriptionReference: {
             id: number;
             name: string;
             description: string;
-            limitSensei: number;
         };
         levelReference: {
             id: number;
             name: string;
             description: string;
         };
-        _count: {
-            profilePhotoReference: number;
-            wallpaperPhotoReference: number;
-            subscriptionReference: number;
-            levelReference: number;
-            session: number;
-            notifications: number;
-            senseis: number;
-        };
-    } & {
-        id: number;
-        name: string;
-        lastname: string;
-        password: string;
-        email: string;
-        username: string;
-        coin: number;
-        createAt: Date;
-        updateAt: Date;
-        last_session: Date | null;
-        rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
-        subscriptionId: number | null;
-        levelId: number | null;
-    }>;
-    findByEmail({ email }: {
-        email: string;
-    }): Promise<{
-        session: {
-            id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
         profilePhotoReference: {
             id: number;
-            uuid: string;
+            publicId: string;
             documentPath: string;
             documentDownload: string;
             type: string;
             use: string;
-        };
-        wallpaperPhotoReference: {
-            id: number;
-            uuid: string;
-            documentPath: string;
-            documentDownload: string;
-            type: string;
-            use: string;
-        };
-        subscriptionReference: {
-            id: number;
-            name: string;
-            description: string;
-            limitSensei: number;
-        };
-        levelReference: {
-            id: number;
-            name: string;
-            description: string;
         };
     } & {
         id: number;
-        name: string;
-        lastname: string;
-        password: string;
-        email: string;
-        username: string;
         coin: number;
-        createAt: Date;
-        updateAt: Date;
-        last_session: Date | null;
-        rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
+        languaje: string;
+        userId: number;
+        GameId: number;
         subscriptionId: number | null;
         levelId: number | null;
+        profilePhotoId: number | null;
     }>;
-    findByUsername({ username }: {
-        username: string;
-    }): Promise<{
-        session: {
-            id: number;
-            startSession: Date;
-            endSession: Date | null;
-            token: string;
-            userId: number;
-        }[];
-        profilePhotoReference: {
-            id: number;
-            uuid: string;
-            documentPath: string;
-            documentDownload: string;
-            type: string;
-            use: string;
-        };
-        wallpaperPhotoReference: {
-            id: number;
-            uuid: string;
-            documentPath: string;
-            documentDownload: string;
-            type: string;
-            use: string;
-        };
-        subscriptionReference: {
-            id: number;
-            name: string;
-            description: string;
-            limitSensei: number;
-        };
-        levelReference: {
-            id: number;
-            name: string;
-            description: string;
-        };
-    } & {
+    findTest(): Promise<{
         id: number;
         name: string;
         lastname: string;
@@ -194,61 +64,25 @@ export declare class UserService {
         updateAt: Date;
         last_session: Date | null;
         rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
-        subscriptionId: number | null;
-        levelId: number | null;
     }>;
-    getCoin({ id }: {
+    create(data: RegisterDto, nameGame: string): Promise<{
         id: number;
-    }): Promise<{
         coin: number;
+        languaje: string;
+        userId: number;
+        GameId: number;
+        subscriptionId: number | null;
+        levelId: number | null;
+        profilePhotoId: number | null;
     }>;
-    incrementCoint({ coin, id }: {
-        coin?: number;
+    Hash(password: string): Promise<string>;
+    Compare(password: string, passwordHash: string): Promise<boolean>;
+    HandleSession(id: number): Promise<{
         id: number;
-    }): Prisma.Prisma__UserClient<{
-        id: number;
-        name: string;
-        lastname: string;
-        password: string;
-        email: string;
-        username: string;
-        coin: number;
-        createAt: Date;
-        updateAt: Date;
-        last_session: Date | null;
-        rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
-        subscriptionId: number | null;
-        levelId: number | null;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
-    decrementCoint({ coin, id }: {
-        coin?: number;
-        id: number;
-    }): Prisma.Prisma__UserClient<{
-        id: number;
-        name: string;
-        lastname: string;
-        password: string;
-        email: string;
-        username: string;
-        coin: number;
-        createAt: Date;
-        updateAt: Date;
-        last_session: Date | null;
-        rol: string;
-        profilePhotoId: number | null;
-        wallpaperPhotoId: number | null;
-        subscriptionId: number | null;
-        levelId: number | null;
-    }, never, import("@prisma/client/runtime/library").DefaultArgs>;
-    HashPassword({ password }: {
-        password: string;
-    }): Promise<string>;
-    ComparePassword({ password, passwordDb }: {
-        password: string;
-        passwordDb: string;
-    }): Promise<boolean>;
+        startSession: Date;
+        endSession: Date | null;
+        token: string;
+        dataId: number;
+    }>;
+    CreateJWT(id: number): Promise<void>;
 }

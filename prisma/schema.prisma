@@ -15,31 +15,28 @@ datasource db {
 }
 
 model MasterDocuments {
-  id               Int    @id @default(autoincrement())
-  uuid             String @default(uuid())
-  documentPath     String
-  documentDownload String
+  id                  Int           @id       @default(autoincrement())
+  publicId            String        @default(uuid())
+  documentPath        String        @default("")
+  documentDownload    String        @default("")  
 
-  type String
-  use  String
-
-  user             User[] @relation(name: "profile")
-  wallpaper        User[] @relation(name: "wallpaper")
+  type                String        @default("")
+  use                 String        @default("")
+  gameReference       DataUserGame?
 }
 
 model MasterSubscriptions {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
-  description String
-  limitSensei      Int
-  users       User[]
+  id              Int     @id @default(autoincrement())
+  name            String  @unique
+  description     String
+  users           DataUserGame[]
 }
 
 model MasterLevels {
-  id          Int    @id @default(autoincrement())
-  name        String @unique
-  description String
-  users       User[]
+  id              Int    @id @default(autoincrement())
+  name            String @unique
+  description     String
+  users           DataUserGame[]
 }
 
 model User {
@@ -58,23 +55,8 @@ model User {
 
   rol String @default("USER")
 
-  profilePhotoId        Int?
-  profilePhotoReference MasterDocuments?    @relation(name: "profile", fields: [profilePhotoId], references: [id])
-
-  wallpaperPhotoId        Int?
-  wallpaperPhotoReference MasterDocuments?  @relation(name: "wallpaper", fields: [profilePhotoId], references: [id])
-
-  subscriptionId          Int?
-  subscriptionReference   MasterSubscriptions? @relation(fields: [subscriptionId], references: [id])
-
-  levelId        Int?
-  levelReference MasterLevels? @relation(fields: [levelId], references: [id])
-
   // relations
-  session         Session[]
-  notifications   Notification[]
-  senseis         Sensei[]
-  games           Game[]
+  dataUserGame    DataUserGame[]
 }
 
 model Session {
@@ -85,14 +67,14 @@ model Session {
 
   token String
 
-  userId        Int
-  userReference User @relation(fields: [userId], references: [id])
+  dataId        Int
+  userReference DataUserGame @relation(fields: [dataId], references: [id])
 }
 
 model Notification {
   id                Int         @id           @default(autoincrement())
   userId            Int
-  userReference     User        @relation(fields: [userId], references: [id])
+  dataReference     DataUserGame        @relation(fields: [userId], references: [id])
   content           String
   redirect          String      @default("")
   type              String
@@ -102,34 +84,34 @@ model Notification {
   createAt          DateTime  @default(now())
 }
 
+model DataUserGame {
+  id                      Int       @id     @default(autoincrement())
+  coin                    Int
+
+  languaje                String    @default("es")
+
+  userId                  Int
+  userReference           User      @relation(fields: [userId], references: [id])
+
+  GameId                  Int
+  dameReference           Game      @relation(fields: [GameId], references: [id])
+
+  subscriptionId          Int?
+  subscriptionReference   MasterSubscriptions? @relation(fields: [subscriptionId], references: [id])
+
+  levelId                 Int?
+  levelReference          MasterLevels? @relation(fields: [levelId], references: [id])
+
+  notifications           Notification[]
+  sessions                Session[]
+
+  profilePhotoId          Int?      @unique
+  profilePhotoReference   MasterDocuments?    @relation(fields: [profilePhotoId], references: [id])  
+}
+
 model Game {
-  id          Int       @id     @default(autoincrement())
-  gameName    String    @unique
-  devices     String
-  userId      Int     
-  userAccount User      @relation(fields: [userId], references: [id])
-}
-
-model Sensei {
-  id                Int        @id           @default(autoincrement())
-  name              String
-  tema              String
-
-  userId            Int
-  userReference     User      @relation(fields: [userId], references: [id])
-
-  createAt          DateTime  @default(now())
-  updateAt          DateTime  @updatedAt
-  deleteAt          DateTime?
-
-  propmsQuery       SenseiChat[]  
-}
-
-model SenseiChat {
-  id                Int       @id       @default(autoincrement())
-  message           String
-  origin            Boolean
-  createAt          DateTime    @default(now())
-  senseiId          Int
-  senseiReference   Sensei    @relation(fields: [senseiId], references: [id])
+  id              Int       @id     @default(autoincrement())
+  name            String    @unique
+  devices         String    @default("mobile")
+  dataUserGame    DataUserGame[]
 }

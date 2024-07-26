@@ -1,76 +1,32 @@
-import { CreateSubscriptionDto } from './dto/create.dto';
-import { UpdateSubscriptionDto } from './dto/update.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { PrismaService } from 'src/global/prisma.service';
 export declare class SubscriptionService {
     private prisma;
     constructor(prisma: PrismaService);
-    create({ data }: {
-        data: CreateSubscriptionDto;
+    create(data: CreateSubscriptionDto): Promise<{
+        id: number;
+        name: string;
+        description: string;
+    }>;
+    findAll({ skip, take, options }: {
+        skip: number;
+        take: number;
+        options?: any;
     }): Promise<{
         id: number;
         name: string;
         description: string;
-        limitSensei: number;
-    }>;
-    findAll({ pag, limit }: {
-        pag: number;
-        limit: number;
-    }): Promise<({
-        users: {
-            email: string;
-            username: string;
-            name: string;
-            lastname: string;
-            last_session: Date;
-            _count: {
-                profilePhotoReference: number;
-                wallpaperPhotoReference: number;
-                subscriptionReference: number;
-                levelReference: number;
-                session: number;
-                notifications: number;
-                senseis: number;
-            };
-        }[];
-    } & {
+    }[]>;
+    findOne(id: number): import(".prisma/client").Prisma.Prisma__MasterSubscriptionsClient<{
         id: number;
         name: string;
         description: string;
-        limitSensei: number;
-    })[]>;
-    findOne({ id }: {
-        id: number;
-    }): Promise<{
-        users: {
-            email: string;
-            username: string;
-            name: string;
-            lastname: string;
-            last_session: Date;
-            _count: {
-                profilePhotoReference: number;
-                wallpaperPhotoReference: number;
-                subscriptionReference: number;
-                levelReference: number;
-                session: number;
-                notifications: number;
-                senseis: number;
-            };
-        }[];
-    } & {
+    }, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    update(id: number, data: UpdateSubscriptionDto): Promise<{
         id: number;
         name: string;
         description: string;
-        limitSensei: number;
     }>;
-    update({ id, data }: {
-        id: number;
-        data: UpdateSubscriptionDto;
-    }): Promise<{
-        id: number;
-        name: string;
-        description: string;
-        limitSensei: number;
-    }>;
-    remove(id: number): Promise<string>;
+    remove(id: number): Promise<number>;
 }

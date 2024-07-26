@@ -1,71 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSubscriptionDto } from './dto/create.dto';
-import { UpdateSubscriptionDto } from './dto/update.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { PrismaService } from 'src/global/prisma.service';
 
 @Injectable()
 export class SubscriptionService {
 
   constructor(
-    private prisma: PrismaService,
+    private prisma: PrismaService
   ) {}
 
-  public async create({data}: {data: CreateSubscriptionDto}) {
-    const entity = this.prisma.masterSubscriptions.create({ data });
-    return entity;
+  public async create(data: CreateSubscriptionDto) {
+    return this.prisma.masterSubscriptions.create({ data });
   }
 
-  public async findAll({ pag, limit }: { pag:number, limit: number }) {
-    const entity = this.prisma.masterSubscriptions.findMany({
-      skip: pag*limit,
-      take: limit,
-      include: {
-        users: {
-          select: {
-            email: true,
-            lastname: true,
-            name: true,
-            username: true,
-            _count: true,
-            last_session: true
-          }
-        }
-      }
-    })
-
-    return entity;
+  public async findAll({ skip, take, options }: { skip:number, take:number, options?:any }) {
+    return this.prisma.masterSubscriptions.findMany({ skip, take });
   }
 
-  public async findOne({id}: {id: number}) {
-    const entity = this.prisma.masterSubscriptions.findFirst({
-      where: {id},
-      include: {
-        users: {
-          select: {
-            email: true,
-            lastname: true,
-            name: true,
-            username: true,
-            _count: true,
-            last_session: true
-          }
-        }
-      }
-    })
-
-    return entity;
+  public findOne(id: number) {
+    return this.prisma.masterSubscriptions.findFirst({ where:{id} });
   }
 
-  public async update({id, data}: {id: number, data: UpdateSubscriptionDto}) {
-    const entity = this.prisma.masterSubscriptions.update({
-      data,
-      where: { id }
-    });
-
-    return entity;
+  public async update(id: number, data: UpdateSubscriptionDto) {
+    return this.prisma.masterSubscriptions.update({ data, where:{id} });
   }
 
   public async remove(id: number) {
-    return `This action removes a #${id} subscription`;
+    return id;
   }
 }

@@ -1,131 +1,88 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { TranslateService } from 'src/translate/translate.service';
+import { PrismaService } from 'src/global/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Prisma } from '@prisma/client';
-import { UserCompelted } from 'src/types/user.d';
-import { CreateUserDto } from 'src/auth/dto/register.dto';
+import {  } from 'jsonwebtoken';
+import { RegisterDto } from './dto/register.dto';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from 'src/global/constant';
 
 @Injectable()
 export class UserService {
 
     constructor(
-        private prisma: PrismaService, 
-        private trans: TranslateService
+        private prisma: PrismaService,
+        private jwt: JwtService
     ) {}
 
-    public async create({ data }: { data:CreateUserDto }) {
-        const entity = this.prisma.user.create({ data });
-        return entity;
-    }
-
-    public async validateSenseisByUser({ id }: { id:number }) {
-        const user = await this.prisma.user.findFirst({
-            where: { id },
+    public async findFirsh(param: string, nameGame:string) {
+        return this.prisma.dataUserGame.findFirst({
+            where: {
+                userReference: { OR:[{ email:param }, { username: param }] },
+                dameReference: { name: nameGame }
+            },
             include: {
-                subscriptionReference: true,
-                _count: {
-                    select: {
-                        senseis: true
-                    }
-                }
-            }
-        });
-
-        const limitSensei = user.subscriptionReference.limitSensei;
-        const senseiUser = user._count.senseis;
-
-        if(senseiUser+1 > limitSensei) {
-            // limit alcanzado
-            return false;
-        }
-
-        return true;
-    }
-
-    public async findUserById({ id }: { id:number }) {
-        const entityPromise = this.prisma.user.findUnique({ 
-            where: { id },
-            include: {
-                _count: true,
+                dameReference: true,
+                userReference: true,
                 levelReference: true,
-                profilePhotoReference: true,
                 subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
+                profilePhotoReference: true
             }
         });
-        return entityPromise;
     }
 
-    public async findByEmail({ email }: { email:string }) {
-        const entityPromise = this.prisma.user.findUnique({ 
-            where: { email },
-            include: {
-                levelReference: true,
-                profilePhotoReference: true,
-                subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
-            }
-        });
-        return entityPromise;
+    public async findTest() {
+        return this.prisma.user.findFirst();
     }
 
-    public async findByUsername({ username }: { username:string }) {
-        const entityPromise = this.prisma.user.findUnique({ 
-            where: { username },
-            include: {
-                levelReference: true,
-                profilePhotoReference: true,
-                subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
-            }
-        });
-        return entityPromise;
-    }
+    public async create(data: RegisterDto, nameGame:string) {
+        const levelPromise = this.prisma.masterLevels.findFirst({ orderBy:{id:'asc'} });
+        const gamePromise = this.prisma.game.findFirst({ where:{name:nameGame} });
+        const subscriptionPromise = this.prisma.masterSubscriptions.findFirst({ orderBy:{id:'asc'} });
 
-    public async getCoin({id}: {id:number}) {
-        const entity = this.prisma.user.findFirst({ 
-            where: {id},
-            select: { coin:true }
-        });
-        return entity;
-    }
+        const createPromise = this.prisma.user.create({ data });
+        
+        const level = await levelPromise;
+        const game = await gamePromise;
+        const subscription = await subscriptionPromise;
 
-    public incrementCoint({ coin, id }: { coin?: number, id: number }) {
-        const entity = this.prisma.user.update({
-            where: { id },
+        const user = await createPromise;
+
+        return this.prisma.dataUserGame.create({
             data: {
-                coin: {
-                    increment: coin ? coin : 1
-                }
+                coin: 5,
+                userReference: { connect: { id:user.id }},
+                // level
+                levelReference: {connect:{id:level.id}},
+                // game
+                dameReference: {connect:{id:game.id}},
+                // subs
+                subscriptionReference: {connect:{id:subscription.id}},
+                profilePhotoReference: { create:{} }
             }
-        });
-        return entity;
+        })
     }
 
-    public decrementCoint({ coin, id }: { coin?: number, id: number }) {
-        const entity = this.prisma.user.update({
-            where: { id },
+    public async Hash(password: string) {
+        return bcrypt.hash(password, 11);
+    }
+
+    public async Compare(password: string, passwordHash: string) {
+        return await bcrypt.compare(password, passwordHash);
+    }
+
+    public async HandleSession(id: number) {
+        const date = new Date();
+        const token = await this.jwt.signAsync(id.toString(), { secret: jwtConstants.secret });
+        return await this.prisma.session.create({
             data: {
-                coin: {
-                    decrement: coin ? coin : 1
-                }
-            }
+                startSession: date,
+                token,
+                dataId: id,
+            }   
         });
-        return entity;
     }
 
-    public async HashPassword({ password }: { password:string }) {
-        const hash = await bcrypt.hash(password, 11);
-        return hash;
+    public async CreateJWT(id: number) {
+        return 
     }
-
-    public async ComparePassword({ password, passwordDb }: { password:string, passwordDb:string }) {
-        const compare = await bcrypt.compare(password, passwordDb);
-        return compare;
-    }
-
 }

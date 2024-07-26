@@ -11,58 +11,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LevelService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
+const prisma_service_1 = require("../global/prisma.service");
 let LevelService = class LevelService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async findAll({ pag, limit }) {
-        const entity = this.prisma.masterLevels.findMany({
-            skip: pag * limit,
-            take: limit,
-            include: {
-                users: {
-                    select: {
-                        _count: true,
-                        email: true,
-                        lastname: true,
-                        name: true,
-                        username: true,
-                        last_session: true
-                    }
-                }
-            }
-        });
-        return entity;
+    async create(data) {
+        return this.prisma.masterLevels.create({ data });
     }
-    async find({ id }) {
-        const entity = this.prisma.masterLevels.findFirst({
-            where: { id },
-            include: {
-                users: {
-                    select: {
-                        email: true,
-                        lastname: true,
-                        name: true,
-                        rol: true,
-                        username: true,
-                        last_session: true
-                    }
-                }
-            }
-        });
-        return entity;
+    async findAll({ skip, take, options }) {
+        return this.prisma.masterLevels.findMany({ skip, take });
     }
-    async create({ data }) {
-        const entity = this.prisma.masterLevels.create({ data });
-        return entity;
+    findOne(id) {
+        return this.prisma.masterLevels.findFirst({ where: { id } });
     }
-    async update({ data, id }) {
-        const entity = this.prisma.masterLevels.update({
-            data,
-            where: { id }
-        });
-        return entity;
+    async update(id, data) {
+        return this.prisma.masterLevels.update({ data, where: { id } });
+    }
+    async remove(id) {
+        return id;
     }
 };
 exports.LevelService = LevelService;

@@ -1,65 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateLevelDto } from './dto/create.dto';
-import { UpdateLevelDto } from './dto/update.dto';
+import { CreateLevelDto } from './dto/create-level.dto';
+import { UpdateLevelDto } from './dto/update-level.dto';
+import { PrismaService } from 'src/global/prisma.service';
 
 @Injectable()
 export class LevelService {
 
-    constructor(
-        private prisma: PrismaService,
-    ) {}
+  constructor(
+    private prisma: PrismaService
+  ) {}
 
-    public async findAll({ pag, limit }: { pag:number, limit:number }) {
-        const entity = this.prisma.masterLevels.findMany({
-            skip: pag*limit,
-            take: limit,
-            include: {
-                users: {
-                    select: {
-                        _count: true,
-                        email: true,
-                        lastname: true,
-                        name: true,
-                        username: true,
-                        last_session: true
-                    }
-                }
-            }
-        });
-        return entity
-    }
+  public async create(data: CreateLevelDto) {
+    return this.prisma.masterLevels.create({ data });
+  }
 
-    public async find({ id }: { id:number }) {
-        const entity = this.prisma.masterLevels.findFirst({ 
-            where: {id},
-            include: {
-                users: {
-                    select: {
-                        email: true,
-                        lastname: true,
-                        name: true,
-                        rol: true,
-                        username: true,
-                        last_session: true
-                    }
-                }
-            }
-        });
-        return entity;
-    }
+  public async findAll({ skip, take, options }: { skip:number, take:number, options?:any }) {
+    return this.prisma.masterLevels.findMany({ skip, take });
+  }
 
-    public async create({ data }: { data:CreateLevelDto }) {
-        const entity = this.prisma.masterLevels.create({ data });
-        return entity;
-    }
+  public findOne(id: number) {
+    return this.prisma.masterLevels.findFirst({ where:{id} });
+  }
 
-    public async update({ data, id }: { data: UpdateLevelDto, id:number }) {
-        const entity = this.prisma.masterLevels.update({
-            data,
-            where: { id }
-        });
-        return entity;
-    }
+  public async update(id: number, data: UpdateLevelDto) {
+    return this.prisma.masterLevels.update({ data, where:{id} });
+  }
 
+  public async remove(id: number) {
+    return id;
+  }
 }

@@ -15,37 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionController = void 0;
 const common_1 = require("@nestjs/common");
 const subscription_service_1 = require("./subscription.service");
-const create_dto_1 = require("./dto/create.dto");
-const update_dto_1 = require("./dto/update.dto");
+const create_subscription_dto_1 = require("./dto/create-subscription.dto");
+const update_subscription_dto_1 = require("./dto/update-subscription.dto");
 let SubscriptionController = class SubscriptionController {
-    constructor(subscriptionService) {
-        this.subscriptionService = subscriptionService;
+    constructor(SubscriptionService) {
+        this.SubscriptionService = SubscriptionService;
     }
-    async create(createSubscriptionDto, res) {
-        const entity = this.subscriptionService.create({ data: createSubscriptionDto });
-        return res
-            .status(common_1.HttpStatus.CREATED)
-            .json({ body: await entity });
+    async create(createSubscriptionDto) {
+        return await this.SubscriptionService.create(createSubscriptionDto);
     }
-    async findAll(query, res) {
-        const pag = query.pag ? parseInt(query.pag) : 0;
-        const limit = query.limit ? parseInt(query.limit) : 0;
-        const entity = this.subscriptionService.findAll({ pag, limit });
-        return res
-            .status(common_1.HttpStatus.OK)
-            .json({ body: await entity });
+    async findAll(query) {
+        return await this.SubscriptionService.findAll({ skip: query.skip ? Number(query.skip) : 0, take: query.take ? Number(query.take) : 10 });
     }
-    async findOne(id, res) {
-        const entity = this.subscriptionService.findOne({ id: Number(id) });
-        return res
-            .status(common_1.HttpStatus.OK)
-            .json({ body: await entity });
+    async findOne(id) {
+        return await this.SubscriptionService.findOne(Number(id));
     }
-    async update(id, updateSubscriptionDto, res) {
-        const entity = this.subscriptionService.update({ id: Number(id), data: updateSubscriptionDto });
-        return res
-            .status(common_1.HttpStatus.OK)
-            .json({ body: await entity });
+    async update(id, updateSubscriptionDto) {
+        return await this.SubscriptionService.update(Number(id), updateSubscriptionDto);
     }
 };
 exports.SubscriptionController = SubscriptionController;
@@ -53,34 +39,30 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_dto_1.CreateSubscriptionDto, Object]),
+    __metadata("design:paramtypes", [create_subscription_dto_1.CreateSubscriptionDto]),
     __metadata("design:returntype", Promise)
 ], SubscriptionController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
-    __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], SubscriptionController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], SubscriptionController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)(':id'),
+    (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Response)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_dto_1.UpdateSubscriptionDto, Object]),
+    __metadata("design:paramtypes", [String, update_subscription_dto_1.UpdateSubscriptionDto]),
     __metadata("design:returntype", Promise)
 ], SubscriptionController.prototype, "update", null);
 exports.SubscriptionController = SubscriptionController = __decorate([

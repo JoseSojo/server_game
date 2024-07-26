@@ -1,63 +1,32 @@
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateLevelDto } from './dto/create.dto';
-import { UpdateLevelDto } from './dto/update.dto';
+import { CreateLevelDto } from './dto/create-level.dto';
+import { UpdateLevelDto } from './dto/update-level.dto';
+import { PrismaService } from 'src/global/prisma.service';
 export declare class LevelService {
     private prisma;
     constructor(prisma: PrismaService);
-    findAll({ pag, limit }: {
-        pag: number;
-        limit: number;
-    }): Promise<({
-        users: {
-            email: string;
-            username: string;
-            name: string;
-            lastname: string;
-            last_session: Date;
-            _count: {
-                profilePhotoReference: number;
-                wallpaperPhotoReference: number;
-                subscriptionReference: number;
-                levelReference: number;
-                session: number;
-                notifications: number;
-                senseis: number;
-            };
-        }[];
-    } & {
-        id: number;
-        name: string;
-        description: string;
-    })[]>;
-    find({ id }: {
-        id: number;
-    }): Promise<{
-        users: {
-            email: string;
-            username: string;
-            name: string;
-            lastname: string;
-            last_session: Date;
-            rol: string;
-        }[];
-    } & {
+    create(data: CreateLevelDto): Promise<{
         id: number;
         name: string;
         description: string;
     }>;
-    create({ data }: {
-        data: CreateLevelDto;
+    findAll({ skip, take, options }: {
+        skip: number;
+        take: number;
+        options?: any;
     }): Promise<{
         id: number;
         name: string;
         description: string;
-    }>;
-    update({ data, id }: {
-        data: UpdateLevelDto;
+    }[]>;
+    findOne(id: number): import(".prisma/client").Prisma.Prisma__MasterLevelsClient<{
         id: number;
-    }): Promise<{
+        name: string;
+        description: string;
+    }, null, import("@prisma/client/runtime/library").DefaultArgs>;
+    update(id: number, data: UpdateLevelDto): Promise<{
         id: number;
         name: string;
         description: string;
     }>;
+    remove(id: number): Promise<number>;
 }

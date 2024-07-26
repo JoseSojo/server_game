@@ -6,19 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SubscriptionModule = void 0;
+exports.LevelModule = void 0;
 const common_1 = require("@nestjs/common");
 const subscription_service_1 = require("./subscription.service");
 const subscription_controller_1 = require("./subscription.controller");
-const prisma_service_1 = require("../prisma/prisma.service");
-const translate_service_1 = require("../translate/translate.service");
-let SubscriptionModule = class SubscriptionModule {
+const prisma_service_1 = require("../global/prisma.service");
+let LevelModule = class LevelModule {
 };
-exports.SubscriptionModule = SubscriptionModule;
-exports.SubscriptionModule = SubscriptionModule = __decorate([
+exports.LevelModule = LevelModule;
+exports.LevelModule = LevelModule = __decorate([
     (0, common_1.Module)({
         controllers: [subscription_controller_1.SubscriptionController],
-        providers: [subscription_service_1.SubscriptionService, prisma_service_1.PrismaService, translate_service_1.TranslateService],
+        providers: [subscription_service_1.SubscriptionService, prisma_service_1.PrismaService],
     })
-], SubscriptionModule);
+], LevelModule);
 //# sourceMappingURL=subscription.module.js.map

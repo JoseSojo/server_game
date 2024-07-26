@@ -14,73 +14,120 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
-const translate_service_1 = require("../translate/translate.service");
-const login_dto_1 = require("./dto/login.dto");
+const fixtures_service_1 = require("../fixtures/fixtures.service");
+const game_service_1 = require("../game/game.service");
+const level_service_1 = require("../level/level.service");
+const subscription_service_1 = require("../subscription/subscription.service");
+const login_dto_1 = require("../user/dto/login.dto");
+const register_dto_1 = require("../user/dto/register.dto");
 const user_service_1 = require("../user/user.service");
-const auth_service_1 = require("./auth.service");
 let AuthController = class AuthController {
-    constructor(prisma, userService, trans, authService) {
-        this.prisma = prisma;
-        this.userService = userService;
-        this.trans = trans;
-        this.authService = authService;
+    constructor(user, level, subscritions, game, fix) {
+        this.user = user;
+        this.level = level;
+        this.subscritions = subscritions;
+        this.game = game;
+        this.fix = fix;
     }
-    async login(data, res) {
-        const user = await this.userService.findByEmail({ email: data.email });
-        if (!user) {
-            return res
-                .status(common_1.HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.login.danger.emailNotFound });
-        }
-        const compare = await this.userService.ComparePassword({ password: data.password, passwordDb: user.password });
-        if (!compare) {
-            return res
-                .status(common_1.HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.login.danger.passwordCompare });
-        }
-        const session = await this.authService.findSessionByUserId({ id: user.id });
-        if (session) {
-            this.authService.logout({ id: session.id });
-        }
-        const token = this.authService.generateLogin({ id: user.id });
-        return res
-            .status(common_1.HttpStatus.OK)
-            .json({ body: user, token: await token, message: this.trans.translate().auth.login.success.default });
+    async login(query, body) {
+        const foundPromise = this.user.findFirsh(body.access, query.nameGame);
+        const userFound = await foundPromise;
+        if (!userFound)
+            return common_1.UnauthorizedException;
+        const compare = this.user.Compare(body.password, userFound.userReference.password);
+        if (!compare)
+            return common_1.UnauthorizedException;
+        const token = await this.user.HandleSession(userFound.id);
+        return {
+            token,
+            body: userFound
+        };
     }
-    async logout(req) {
-        const token = req.headers.token;
-        const session = await this.authService.findSessionByToken({ token });
-        if (!session) {
+    async register(query, body) {
+        const emailPromise = this.user.findFirsh(body.email, query.nameGame);
+        const userPromise = this.user.findFirsh(body.username, query.nameGame);
+        if (await emailPromise)
             return false;
+        if (await userPromise)
+            return false;
+        body.password = await this.user.Hash(body.password);
+        const create = await this.user.create(body, query.nameGame);
+        return { create };
+    }
+    async fixtures() {
+        let execute = true;
+        const messages = [];
+        const levels = await this.level.findAll({ skip: 0, take: 1 });
+        const subs = await this.subscritions.findAll({ skip: 0, take: 1 });
+        const game = await this.game.findAll({ skip: 0, take: 1 });
+        const user = await this.user.findTest();
+        if (game.length > 0) {
+            messages.push({ name: `game`, message: `creados` });
         }
-        await this.authService.logout({ id: session.id });
-        return session;
+        else {
+            messages.push({ name: `gamex`, message: `creando` });
+            await this.fix.loadGame();
+        }
+        if (levels.length > 0) {
+            messages.push({ name: `levels`, message: `creados` });
+        }
+        else {
+            messages.push({ name: `levels`, message: `creando` });
+            await this.fix.loadLevel();
+        }
+        if (subs.length > 0) {
+            messages.push({ name: `subs`, message: `creados` });
+        }
+        else {
+            messages.push({ name: `subs`, message: `creando` });
+            await this.fix.loadSubscription();
+        }
+        if (user) {
+            messages.push({ name: `user`, message: `creados` });
+        }
+        else {
+            messages.push({ name: `user`, message: `creando` });
+            setTimeout(async () => {
+                console.log(123);
+                await this.fix.loadUser();
+            }, 5000);
+        }
+        return { messages };
     }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)(`/login`),
+    (0, common_1.Post)(`login`),
+    (0, common_1.HttpCode)(200),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginUserDto, Object]),
+    __metadata("design:paramtypes", [Object, login_dto_1.LoginDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
-    (0, common_1.Get)(`/logout`),
-    (0, common_1.HttpCode)(200),
-    __param(0, (0, common_1.Request)()),
+    (0, common_1.Post)(`register`),
+    (0, common_1.HttpCode)(201),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, register_dto_1.RegisterDto]),
     __metadata("design:returntype", Promise)
-], AuthController.prototype, "logout", null);
+], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)(`fixtures`),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "fixtures", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        user_service_1.UserService,
-        translate_service_1.TranslateService,
-        auth_service_1.AuthService])
+    __metadata("design:paramtypes", [user_service_1.UserService,
+        level_service_1.LevelService,
+        subscription_service_1.SubscriptionService,
+        game_service_1.GameService,
+        fixtures_service_1.FixturesService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

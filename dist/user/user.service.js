@@ -11,119 +11,78 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma/prisma.service");
-const translate_service_1 = require("../translate/translate.service");
+const prisma_service_1 = require("../global/prisma.service");
 const bcrypt = require("bcrypt");
+const jwt_1 = require("@nestjs/jwt");
+const constant_1 = require("../global/constant");
 let UserService = class UserService {
-    constructor(prisma, trans) {
+    constructor(prisma, jwt) {
         this.prisma = prisma;
-        this.trans = trans;
+        this.jwt = jwt;
     }
-    async create({ data }) {
-        const entity = this.prisma.user.create({ data });
-        return entity;
-    }
-    async validateSenseisByUser({ id }) {
-        const user = await this.prisma.user.findFirst({
-            where: { id },
+    async findFirsh(param, nameGame) {
+        return this.prisma.dataUserGame.findFirst({
+            where: {
+                userReference: { OR: [{ email: param }, { username: param }] },
+                dameReference: { name: nameGame }
+            },
             include: {
-                subscriptionReference: true,
-                _count: {
-                    select: {
-                        senseis: true
-                    }
-                }
-            }
-        });
-        const limitSensei = user.subscriptionReference.limitSensei;
-        const senseiUser = user._count.senseis;
-        if (senseiUser + 1 > limitSensei) {
-            return false;
-        }
-        return true;
-    }
-    async findUserById({ id }) {
-        const entityPromise = this.prisma.user.findUnique({
-            where: { id },
-            include: {
-                _count: true,
+                dameReference: true,
+                userReference: true,
                 levelReference: true,
-                profilePhotoReference: true,
                 subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
+                profilePhotoReference: true
             }
         });
-        return entityPromise;
     }
-    async findByEmail({ email }) {
-        const entityPromise = this.prisma.user.findUnique({
-            where: { email },
-            include: {
-                levelReference: true,
-                profilePhotoReference: true,
-                subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
-            }
-        });
-        return entityPromise;
+    async findTest() {
+        return this.prisma.user.findFirst();
     }
-    async findByUsername({ username }) {
-        const entityPromise = this.prisma.user.findUnique({
-            where: { username },
-            include: {
-                levelReference: true,
-                profilePhotoReference: true,
-                subscriptionReference: true,
-                wallpaperPhotoReference: true,
-                session: true
-            }
-        });
-        return entityPromise;
-    }
-    async getCoin({ id }) {
-        const entity = this.prisma.user.findFirst({
-            where: { id },
-            select: { coin: true }
-        });
-        return entity;
-    }
-    incrementCoint({ coin, id }) {
-        const entity = this.prisma.user.update({
-            where: { id },
+    async create(data, nameGame) {
+        const levelPromise = this.prisma.masterLevels.findFirst({ orderBy: { id: 'asc' } });
+        const gamePromise = this.prisma.game.findFirst({ where: { name: nameGame } });
+        const subscriptionPromise = this.prisma.masterSubscriptions.findFirst({ orderBy: { id: 'asc' } });
+        const createPromise = this.prisma.user.create({ data });
+        const level = await levelPromise;
+        const game = await gamePromise;
+        const subscription = await subscriptionPromise;
+        const user = await createPromise;
+        return this.prisma.dataUserGame.create({
             data: {
-                coin: {
-                    increment: coin ? coin : 1
-                }
+                coin: 5,
+                userReference: { connect: { id: user.id } },
+                levelReference: { connect: { id: level.id } },
+                dameReference: { connect: { id: game.id } },
+                subscriptionReference: { connect: { id: subscription.id } },
+                profilePhotoReference: { create: {} }
             }
         });
-        return entity;
     }
-    decrementCoint({ coin, id }) {
-        const entity = this.prisma.user.update({
-            where: { id },
+    async Hash(password) {
+        return bcrypt.hash(password, 11);
+    }
+    async Compare(password, passwordHash) {
+        return await bcrypt.compare(password, passwordHash);
+    }
+    async HandleSession(id) {
+        const date = new Date();
+        const token = await this.jwt.signAsync(id.toString(), { secret: constant_1.jwtConstants.secret });
+        return await this.prisma.session.create({
             data: {
-                coin: {
-                    decrement: coin ? coin : 1
-                }
+                startSession: date,
+                token,
+                dataId: id,
             }
         });
-        return entity;
     }
-    async HashPassword({ password }) {
-        const hash = await bcrypt.hash(password, 11);
-        return hash;
-    }
-    async ComparePassword({ password, passwordDb }) {
-        const compare = await bcrypt.compare(password, passwordDb);
-        return compare;
+    async CreateJWT(id) {
+        return;
     }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        translate_service_1.TranslateService])
+        jwt_1.JwtService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

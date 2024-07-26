@@ -8,18 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LevelModule = void 0;
 const common_1 = require("@nestjs/common");
-const level_controller_1 = require("./level.controller");
 const level_service_1 = require("./level.service");
-const prisma_service_1 = require("../prisma/prisma.service");
-const translate_service_1 = require("../translate/translate.service");
-const auth_service_1 = require("../auth/auth.service");
+const level_controller_1 = require("./level.controller");
+const prisma_service_1 = require("../global/prisma.service");
 let LevelModule = class LevelModule {
 };
 exports.LevelModule = LevelModule;
 exports.LevelModule = LevelModule = __decorate([
     (0, common_1.Module)({
         controllers: [level_controller_1.LevelController],
-        providers: [level_service_1.LevelService, prisma_service_1.PrismaService, translate_service_1.TranslateService, auth_service_1.AuthService]
+        providers: [level_service_1.LevelService, prisma_service_1.PrismaService],
     })
 ], LevelModule);
 //# sourceMappingURL=level.module.js.map

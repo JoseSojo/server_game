@@ -1,93 +1,102 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Req, Request, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { TranslateService } from 'src/translate/translate.service';
-import { LoginUserDto } from './dto/login.dto';
+import { Body, Controller, HttpCode, Post, Query, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { FixturesService } from 'src/fixtures/fixtures.service';
+import { GameService } from 'src/game/game.service';
+import { LevelService } from 'src/level/level.service';
+import { SubscriptionService } from 'src/subscription/subscription.service';
+import { LoginDto } from 'src/user/dto/login.dto';
+import { RegisterDto } from 'src/user/dto/register.dto';
 import { UserService } from 'src/user/user.service';
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from 'src/constant';
-import { AuthService } from './auth.service';
-import { AuthGuard } from './guard/auth.guard';
-import { Request as RequestType, Response } from 'express';
-import { CreateUserDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
 
     constructor(
-        private prisma: PrismaService,
-        private userService: UserService, 
-        private trans: TranslateService,
-        private authService: AuthService,
-
+        private user: UserService,
+        private level: LevelService,
+        private subscritions: SubscriptionService,
+        private game: GameService,
+        private fix: FixturesService
     ) {}
 
-    @Post(`/login`)
-    @UsePipes(new ValidationPipe())
-    public async login(@Body() data: LoginUserDto, @Res() res: Response) {
-
-        const user = await this.userService.findByEmail({ email:data.email });
-
-        if(!user) {
-            return res
-                .status(HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.login.danger.emailNotFound });
-        }
-
-        const compare = await this.userService.ComparePassword({ password:data.password, passwordDb:user.password });
-        if(!compare) {
-            return res
-                .status(HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.login.danger.passwordCompare });
-        }
-
-        const session = await this.authService.findSessionByUserId({ id:user.id });
-        if(session) {
-            this.authService.logout({ id:session.id });
-        }
-
-        const token = this.authService.generateLogin({ id:user.id });
-
-        return res
-            .status(HttpStatus.OK)
-            .json({ body:user, token: await token, message: this.trans.translate().auth.login.success.default });
-    }
-
-    @Post(`/register`)
-    @UsePipes(new ValidationPipe())
-    public async register(@Body() data: CreateUserDto, @Res() res: Response) {
-        const email = await this.userService.findByEmail({ email:data.email });
-        const username = await this.userService.findByUsername({ username:data.username });
-
-        if(!email) {
-            return res
-                .status(HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.register.danger.emailInUser });
-        }
-
-        if(!username) {
-            return res
-                .status(HttpStatus.NOT_FOUND)
-                .json({ body: data, message: this.trans.translate().auth.register.danger.usernameInUser });
-        }
-
-        const user = await this.userService.create({ data });
-        const token = this.authService.generateLogin({ id:user.id });
-
-        return res
-            .status(HttpStatus.OK)
-            .json({ body:user, token: await token, message: this.trans.translate().global.success.create });
-    }
-
-    @Get(`/logout`)
+    @Post(`login`)
     @HttpCode(200)
-    public async logout(@Request() req: RequestType) {
-        const token = req.headers.token as string;
-        const session = await this.authService.findSessionByToken({ token }); 
-        if(!session) {
-            return false;
+    @UsePipes(new ValidationPipe())
+    public async login(@Query() query: {nameGame:string} ,@Body() body: LoginDto) {
+        const foundPromise = this.user.findFirsh(body.access, query.nameGame);
+        
+        const userFound = await foundPromise;
+        if(!userFound) return UnauthorizedException;
+
+        const compare = this.user.Compare(body.password, userFound.userReference.password);
+        if(!compare) return UnauthorizedException;
+
+        // handle session access token
+        const token = await this.user.HandleSession(userFound.id);
+
+        return {
+            token,
+            body: userFound
         }
-        await this.authService.logout({ id:session.id });
-        return session;
+    }
+
+    @Post(`register`)
+    @HttpCode(201)
+    @UsePipes(new ValidationPipe())
+    public async register(@Query() query: {nameGame:string}, @Body() body: RegisterDto) {
+        const emailPromise = this.user.findFirsh(body.email, query.nameGame);
+        const userPromise = this.user.findFirsh(body.username, query.nameGame);
+
+        if(await emailPromise) return false; // correo en uso en un juego
+        if(await userPromise) return false;  // usuario en uso en un juego
+
+        body.password = await this.user.Hash(body.password);
+        const create = await this.user.create(body, query.nameGame);
+        
+        return { create };
+    }
+
+    @Post(`fixtures`)
+    public async fixtures() {
+        let execute = true;
+        const messages: any[] = [];
+
+        const levels = await this.level.findAll({ skip:0,take:1 });
+        const subs = await this.subscritions.findAll({ skip:0,take:1 });
+        const game = await this.game.findAll({ skip:0,take:1 });
+        const user = await this.user.findTest();
+
+        if(game.length > 0) {
+            messages.push({name:`game`, message:`creados`});
+        } else {
+            messages.push({name:`gamex`, message:`creando`});
+            await this.fix.loadGame();
+        }
+
+        if(levels.length > 0) {
+            messages.push({name:`levels`, message:`creados`});
+        } else {
+            messages.push({name:`levels`, message:`creando`});
+            await this.fix.loadLevel();
+        }
+
+        if(subs.length > 0) {
+            messages.push({name:`subs`, message:`creados`});
+        } else {
+            messages.push({name:`subs`, message:`creando`});
+            await this.fix.loadSubscription();
+        }
+
+        if(user) {
+            messages.push({name:`user`, message:`creados`});
+        } else {
+            messages.push({name:`user`, message:`creando`});
+            setTimeout(async ()=> {
+                console.log(123);
+                await this.fix.loadUser()
+            }, 5000);
+        }
+
+        return {messages};
     }
 
 }

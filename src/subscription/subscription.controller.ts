@@ -1,58 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, Response, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UsePipes, ValidationPipe, Query, Put } from '@nestjs/common';
 import { SubscriptionService } from './subscription.service';
-import { CreateSubscriptionDto } from './dto/create.dto';
-import { UpdateSubscriptionDto } from './dto/update.dto';
-import { Response as ResponseType } from 'express';
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 
 @Controller('subscription')
 export class SubscriptionController {
-  constructor(private readonly subscriptionService: SubscriptionService) {}
+  constructor(private SubscriptionService: SubscriptionService) {}
 
   @Post()
   @UsePipes(new ValidationPipe())
-  public async  create(@Body() createSubscriptionDto: CreateSubscriptionDto, @Response() res: ResponseType) {
-
-
-    const entity = this.subscriptionService.create({ data:createSubscriptionDto });
-    return res
-      .status(HttpStatus.CREATED)
-      .json({ body:await entity });
+  public async create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
+    return await this.SubscriptionService.create(createSubscriptionDto);
   }
 
   @Get()
-  public async findAll(@Query() query: any, @Response() res: ResponseType) {
-
-    const pag = query.pag ? parseInt(query.pag) : 0;
-    const limit = query.limit ? parseInt(query.limit) : 0;
-
-    const entity = this.subscriptionService.findAll({ pag, limit });
-
-    return res
-      .status(HttpStatus.OK)
-      .json({ body:await entity });
+  public async findAll(@Query() query: { skip?:string,take?:string }) {
+    return await this.SubscriptionService.findAll({ skip:query.skip? Number(query.skip) : 0, take: query.take? Number(query.take) : 10 });
   }
 
   @Get(':id')
-  public async findOne(@Param('id') id: string, @Response() res: ResponseType) {
-    const entity = this.subscriptionService.findOne({ id: Number(id)});
-    
-    return res
-      .status(HttpStatus.OK)
-      .json({ body: await entity });
+  public async findOne(@Param('id') id: string) {
+    return await this.SubscriptionService.findOne(Number(id));
   }
 
-  @Patch(':id')
-  public async update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto, @Response() res: ResponseType) {
-
-    const entity = this.subscriptionService.update({ id: Number(id), data:updateSubscriptionDto });
-
-    return res
-      .status(HttpStatus.OK)
-      .json({ body:  await entity });
+  @Put(':id')
+  public async update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
+    return await this.SubscriptionService.update(Number(id), updateSubscriptionDto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.subscriptionService.remove(+id);
-  // }
 }

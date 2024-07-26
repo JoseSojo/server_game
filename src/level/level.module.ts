@@ -1,14 +1,10 @@
 import { Module } from '@nestjs/common';
-import { LevelController } from './level.controller';
 import { LevelService } from './level.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { TranslateService } from 'src/translate/translate.service';
-import { AuthService } from 'src/auth/auth.service';
+import { LevelController } from './level.controller';
+import { PrismaService } from 'src/global/prisma.service';
 
 @Module({
-    controllers: [LevelController],
-    providers: [LevelService, PrismaService, TranslateService, AuthService]
+  controllers: [LevelController],
+  providers: [LevelService, PrismaService],
 })
-export class LevelModule {
-    
-}
+export class LevelModule {}
