@@ -2,6 +2,7 @@ import {
     IsString,
     IsEmail,
     IsNotEmpty,
+    IsNumber,
 } from "class-validator";
 
 export class LoginUserDto {
@@ -15,4 +16,6 @@ export class LoginUserDto {
     @IsEmail()
     email:string
 
+    @IsNumber()
+    game: number
 }

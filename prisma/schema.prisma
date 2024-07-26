@@ -47,8 +47,8 @@ model User {
   name     String
   lastname String
   password String
-  email    String @unique
-  username String @unique
+  email    String 
+  username String 
 
   coin Int @default(3)
 
@@ -74,6 +74,7 @@ model User {
   session         Session[]
   notifications   Notification[]
   senseis         Sensei[]
+  games           Game[]
 }
 
 model Session {
@@ -99,6 +100,14 @@ model Notification {
   read              Boolean     @default(false)
 
   createAt          DateTime  @default(now())
+}
+
+model Game {
+  id          Int       @id     @default(autoincrement())
+  gameName    String    @unique
+  devices     String
+  userId      Int     
+  userAccount User      @relation(fields: [userId], references: [id])
 }
 
 model Sensei {

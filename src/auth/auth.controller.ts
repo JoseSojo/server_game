@@ -8,6 +8,7 @@ import { jwtConstants } from 'src/constant';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './guard/auth.guard';
 import { Request as RequestType, Response } from 'express';
+import { CreateUserDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -49,6 +50,32 @@ export class AuthController {
         return res
             .status(HttpStatus.OK)
             .json({ body:user, token: await token, message: this.trans.translate().auth.login.success.default });
+    }
+
+    @Post(`/register`)
+    @UsePipes(new ValidationPipe())
+    public async register(@Body() data: CreateUserDto, @Res() res: Response) {
+        const email = await this.userService.findByEmail({ email:data.email });
+        const username = await this.userService.findByUsername({ username:data.username });
+
+        if(!email) {
+            return res
+                .status(HttpStatus.NOT_FOUND)
+                .json({ body: data, message: this.trans.translate().auth.register.danger.emailInUser });
+        }
+
+        if(!username) {
+            return res
+                .status(HttpStatus.NOT_FOUND)
+                .json({ body: data, message: this.trans.translate().auth.register.danger.usernameInUser });
+        }
+
+        const user = await this.userService.create({ data });
+        const token = this.authService.generateLogin({ id:user.id });
+
+        return res
+            .status(HttpStatus.OK)
+            .json({ body:user, token: await token, message: this.trans.translate().global.success.create });
     }
 
     @Get(`/logout`)
