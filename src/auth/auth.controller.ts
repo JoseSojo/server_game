@@ -1,4 +1,5 @@
-import { Body, Controller, HttpCode, Post, Query, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Query, Response, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Response as ResponseType } from 'express';
 import { FixturesService } from 'src/fixtures/fixtures.service';
 import { GameService } from 'src/game/game.service';
 import { LevelService } from 'src/level/level.service';
@@ -21,22 +22,24 @@ export class AuthController {
     @Post(`login`)
     @HttpCode(200)
     @UsePipes(new ValidationPipe())
-    public async login(@Query() query: {nameGame:string} ,@Body() body: LoginDto) {
+    public async login(@Query() query: {nameGame:string} ,@Body() body: LoginDto, @Response() res: ResponseType) {
         const foundPromise = this.user.findFirsh(body.access, query.nameGame);
         
         const userFound = await foundPromise;
-        if(!userFound) return UnauthorizedException;
+        if(!userFound) return res.status(401).json({ message:`verify data access` });;
 
-        const compare = this.user.Compare(body.password, userFound.userReference.password);
-        if(!compare) return UnauthorizedException;
+        const compare = await this.user.Compare(body.password, userFound.userReference.password);
+        if(!compare) return res.status(401).json({ message:`verify data segurity` });
 
         // handle session access token
         const token = await this.user.HandleSession(userFound.id);
 
-        return {
-            token,
-            body: userFound
-        }
+        return res
+            .status(200)
+                .json({
+                token,
+                body: userFound
+            })
     }
 
     @Post(`register`)
