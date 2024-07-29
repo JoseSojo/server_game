@@ -12,12 +12,20 @@ export declare class GameController {
     findAll(query: {
         skip?: string;
         take?: string;
-    }): Promise<{
+    }): Promise<({
+        _count: {
+            dataUserGame: number;
+        };
+    } & {
         id: number;
         name: string;
         devices: string;
-    }[]>;
+    })[]>;
     findOne(id: string): import(".prisma/client").Prisma.Prisma__GameClient<{
+        _count: {
+            dataUserGame: number;
+        };
+    } & {
         id: number;
         name: string;
         devices: string;

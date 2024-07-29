@@ -13,12 +13,20 @@ export declare class GameService {
         skip: number;
         take: number;
         options?: any;
-    }): Promise<{
+    }): Promise<({
+        _count: {
+            dataUserGame: number;
+        };
+    } & {
         id: number;
         name: string;
         devices: string;
-    }[]>;
+    })[]>;
     findOne(id: number): import(".prisma/client").Prisma.Prisma__GameClient<{
+        _count: {
+            dataUserGame: number;
+        };
+    } & {
         id: number;
         name: string;
         devices: string;

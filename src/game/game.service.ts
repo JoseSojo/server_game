@@ -15,11 +15,11 @@ export class GameService {
   }
 
   public async findAll({ skip, take, options }: { skip:number, take:number, options?:any }) {
-    return this.prisma.game.findMany({ skip, take });
+    return this.prisma.game.findMany({ skip, take, include: { _count: true } });
   }
 
   public findOne(id: number) {
-    return this.prisma.game.findFirst({ where:{id} });
+    return this.prisma.game.findFirst({ where:{id}, include:{ _count: true } });
   }
 
   public async update(id: number, data: UpdateGameDto) {

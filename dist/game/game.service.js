@@ -20,10 +20,10 @@ let GameService = class GameService {
         return this.prisma.game.create({ data });
     }
     async findAll({ skip, take, options }) {
-        return this.prisma.game.findMany({ skip, take });
+        return this.prisma.game.findMany({ skip, take, include: { _count: true } });
     }
     findOne(id) {
-        return this.prisma.game.findFirst({ where: { id } });
+        return this.prisma.game.findFirst({ where: { id }, include: { _count: true } });
     }
     async update(id, data) {
         return this.prisma.game.update({ data, where: { id } });

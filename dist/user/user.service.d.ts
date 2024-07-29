@@ -84,5 +84,55 @@ export declare class UserService {
         token: string;
         dataId: number;
     }>;
+    findSessionByToken(token: string): Promise<{
+        token: string;
+        data: {
+            userReference: {
+                id: number;
+                name: string;
+                lastname: string;
+                password: string;
+                email: string;
+                username: string;
+                coin: number;
+                createAt: Date;
+                updateAt: Date;
+                last_session: Date | null;
+                rol: string;
+            };
+            dameReference: {
+                id: number;
+                name: string;
+                devices: string;
+            };
+            subscriptionReference: {
+                id: number;
+                name: string;
+                description: string;
+            };
+            levelReference: {
+                id: number;
+                name: string;
+                description: string;
+            };
+            profilePhotoReference: {
+                id: number;
+                publicId: string;
+                documentPath: string;
+                documentDownload: string;
+                type: string;
+                use: string;
+            };
+        } & {
+            id: number;
+            coin: number;
+            languaje: string;
+            userId: number;
+            GameId: number;
+            subscriptionId: number | null;
+            levelId: number | null;
+            profilePhotoId: number | null;
+        };
+    }>;
     CreateJWT(id: number): Promise<void>;
 }

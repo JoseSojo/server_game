@@ -26,6 +26,9 @@ let AuthGuard = class AuthGuard {
             throw new common_1.UnauthorizedException();
         }
         try {
+            const user = await this.userService.findSessionByToken(token);
+            request['user'] = user.data;
+            request['token'] = user.token;
         }
         catch {
             throw new common_1.UnauthorizedException();
